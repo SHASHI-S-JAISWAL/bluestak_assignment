@@ -11,6 +11,8 @@ export default class Dashboard extends Component{
         };
 
     };
+
+    //to enable upcoming campaigns by default 
     componentDidMount(){
         document.getElementById('init').click()
     }

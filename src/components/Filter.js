@@ -1,10 +1,14 @@
 import {data} from '../resource/data';
 
 export default  function Filter(value){
+
+    //initial storing in local storage
     if(!localStorage.getItem('data')){
         let temp =JSON.stringify(data);
         localStorage.setItem('data',temp);
     }
+
+    //filtering of localstorage data on basis of date categories
     var data1 = JSON.parse(localStorage.getItem('data'))
     if (value === 'past'){
         return data1.filter( ele => { return  date_diff_indays(ele.createdOn)  < 0 })

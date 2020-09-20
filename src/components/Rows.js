@@ -4,6 +4,7 @@ import GetDate from './Getdate'
 import {Media,Modal,Button,Table} from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+var fileDownload = require('js-file-download');
 
 export default class Rows extends Component {
     constructor(props){
@@ -15,6 +16,7 @@ export default class Rows extends Component {
             dt_ele:{}
         }
     }
+    //to find the difference in today's date and campaign date
     date_diff_indays = function( date2) {
         let dt1 = new Date();
         let dt2 = new Date(date2);
@@ -26,22 +28,32 @@ export default class Rows extends Component {
         else 
             return Math.abs(diff) +' days ago';  
     }
+
+    //to enable the calendar on date picker by default
     componentDidUpdate(){
         if(document.getElementById('cal'))
         document.getElementById('cal').click();
 
     }
+
+    //handle closing of modal
     handleClose = ( ) =>{
         this.setState({show:false})
     }
+
+    //to show modal
     setmod = ele =>{
         this.setState({M_ele : ele})
         this.setState({show:true})
     }
+
+    //function to enable datepicker
     dt_pick =(el) =>{
         this.setState({dt_ele:el})
         this.setState({dt_ch:true})
     }
+
+    //handle new date selection
     dt_change =(date) =>{
         let temp  = JSON.parse(localStorage.getItem('data'));
         for (let i=0; i<temp.length ;i++){
@@ -52,6 +64,23 @@ export default class Rows extends Component {
         localStorage.removeItem("data");
         localStorage.setItem("data",JSON.stringify(temp) )
         this.setState({dt_ele:{}})
+    }
+
+    //download csv file 
+    dwnld = el =>{
+        let name = el.name +'.csv';
+        let fl = el.name + ' , '+ el.region + ' , '+ el.price + ' , '+ el.createdOn;
+        fileDownload(fl, name);
+    }
+
+    //download report onclick function
+    rpt = el =>{
+        let r_name = el.name+ '.txt'
+        let r_data = `${el.name}
+        price : $ ${el.price}
+        users : 1000
+        revenue: $ ${el.price*1000} `;
+        fileDownload(r_data, r_name);
     }
     render(){
         return(
@@ -135,22 +164,22 @@ export default class Rows extends Component {
                                         <p onClick = {()=> {this.setmod(ele)}} className="mr-1" style ={{display:"inline"}}>View Pricing</p>
                                     </td>
                                     <td>
-                                    <img
+                                    <img    onClick = {() =>{this.dwnld(ele)}}
                                             width={20}
                                             height={20}
                                             className="mr-1"
                                             src= '/file.png'
                                             alt="placeholder"
                                         />
-                                        <p className="mr-3" style ={{display:"inline", fontSize:'2vh',marginLeft:'1vh'}}>CSV</p>
-                                        <img
+                                        <p onClick = {() =>{this.dwnld(ele)}} className="mr-3" style ={{display:"inline", fontSize:'2vh',marginLeft:'1vh'}}>CSV</p>
+                                        <img onClick = {() =>{this.rpt(ele)}}
                                             width={20}
                                             height={20}
                                             className="mr-1"
                                             src= '/statistics-report.png'
                                             alt="placeholder"
                                         />
-                                        <p  className="mr-3" style ={{display:"inline"}}>Report</p>
+                                        <p  onClick = {() =>{this.rpt(ele)}} className="mr-3" style ={{display:"inline"}}>Report</p>
                                         {(this.state.dt_ch === false|| this.state.dt_ele.name !=ele.name ) ?<div style ={{display:"inline"}}>
                                             <img onClick ={()=>{this.dt_pick(ele)}}
                                             width={20}
